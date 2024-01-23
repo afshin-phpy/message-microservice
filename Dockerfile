@@ -1,6 +1,6 @@
 FROM php:8.2-fpm
 
-LABEL maintainer="Afshin-H"
+LABEL maintainer="Afshin"
 
 WORKDIR /var/www/html
 
