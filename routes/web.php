@@ -13,6 +13,7 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
-});
+$router->post('/api/message/store', [
+    "middleware"    =>  "validateToken",
+    "uses"          =>  "MessageController@store"
+]);
