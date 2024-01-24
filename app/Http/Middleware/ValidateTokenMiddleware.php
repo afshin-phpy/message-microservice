@@ -14,17 +14,14 @@ class ValidateTokenMiddleware
 
     public function __construct()
     {
-        $this->authApiUrl   = config("auth_service.api_url");
+        // $this->authApiUrl   = config("auth_service.api_url");
         $this->endPointPath = "/api/token/validate";
     }
 
     public function handle(Request $request, Closure $next)
     {
         try {
-            $hostname = gethostname();
 
-            // Get the IP address associated with the hostname
-            // return $localIP = gethostbyname($hostname);
             $token = $request->header('Authorization');
 
             // Optionally remove the bearer prefix if present
@@ -32,10 +29,14 @@ class ValidateTokenMiddleware
 
             // Validate the token by sending it to the external service
             // validate token
-            $response = Http::withToken($token)->post("http://192.168.130.52:8000/api/token/validate");
+            $response = Http::withToken($token)->post("http://192.168.130.52:8000".$this->endPointPath);
             if($response->failed()) {
                 return APIResource::error('Unauthorized', 401);
             }
+            $data = $response->json();
+
+            // return $data['data']['user_id'];
+            $request->merge(['user_id' =>   $data['data']['user_id']]);
 
             // Token is valid, proceed with the request
             return $next($request);

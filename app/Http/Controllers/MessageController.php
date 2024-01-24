@@ -23,7 +23,6 @@ class MessageController extends Controller
     {
         try {
             $this->validate($request, [
-                'user_id'       =>  'required',
                 'title'         =>  'required|string',
                 'content'       =>  'required|string'
             ]);
