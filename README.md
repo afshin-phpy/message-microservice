@@ -1,26 +1,91 @@
-# Lumen PHP Framework
+# Message Microservice
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/lumen-framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/lumen-framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://img.shields.io/packagist/l/laravel/lumen)](https://packagist.org/packages/laravel/lumen-framework)
+## Overview
+The Message Microservice is designed to handle the storage of user messages. It features a secure endpoint that requires users to be authenticated before they can save their messages. Authentication is managed through token verification, which is done by interfacing with an external Authentication Microservice.
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+### Features
+- **Save Message**: Allows authenticated users to save messages by providing a title and content. Authentication is done via JWT tokens, verified through the Authentication Microservice.
 
-> **Note:** In the years since releasing Lumen, PHP has made a variety of wonderful performance improvements. For this reason, along with the availability of [Laravel Octane](https://laravel.com/docs/octane), we no longer recommend that you begin new projects with Lumen. Instead, we recommend always beginning new projects with [Laravel](https://laravel.com).
+## Getting Started
 
-## Official Documentation
+### Prerequisites
+- Docker
+- Access to the Authentication Microservice for token validation.
+- Any REST client (like Postman) for testing the endpoints.
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
 
-## Contributing
+### Installation
+1. Clone the repository:
+```
+git clone https://github.com/afshin-phpy/message-microservice.git
+```
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. Navigate to the project directory:
 
-## Security Vulnerabilities
+```
+cd message-microservice
+```
+3. Install dependencies:
+```
+composer install
+```
+4. Build container:
+```
+docker-compose build
+```
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+5. Run the container:
+```
+docker-compose up -d
+```
 
-## License
+6. Create a .env file in root directory and copy .env.example content into .env file
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+7. Run following command for database migration:
+```
+docker-compose exec app1 php artisan migrate
+```
+
+
+### Using the Microservice
+
+#### Login
+- **Host**: `127.0.0.1:9000`
+- **Endpoint**: `/api/message/store`
+- **Headers**:  `Authorization: Bearer [JWT]`
+- **Method**: POST
+- **Body**:
+```json
+{
+ "title": "[message title]",
+ "content": "[message content]"
+}
+```
+
+#### Response:
+    Success: Confirmationc of message saving.
+    Error: Relevant error message, including authentication failures.
+
+Example:
+```json
+{
+    "data": {
+        "status": "success",
+        "message": "your data has been stored."
+    }
+}
+```
+
+
+#### Token Validation
+
+- The microservice sends the received JWT token to the Authentication Microservice's `/validate` endpoint.
+- If the token is valid, the message is saved.
+- If not, the user is prevented from saving the message.
+
+
+### Running Tests
+
+To ensure the functionality of the microservice, tests are provided. Run the following command to execute the tests:
+
+    docker-compose exec app vendor/bin/phpunit
