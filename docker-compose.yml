@@ -1,10 +1,12 @@
 version: '3'
 
 services:
-  app:
+  app2:
     build: .
     ports:
       - "9000:9000"
+    networks:
+      - api_bridge_network
     depends_on:
       - mysql
     environment:
@@ -19,16 +21,20 @@ services:
     image: mysql:5.7
     ports:
       - "3308:3306"
+    networks:
+      - api_bridge_network
     environment:
       MYSQL_DATABASE: '${DB_DATABASE}'
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
     volumes:
-      - db_data:/var/lib/mysql
+      - db_data_app2:/var/lib/mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
       - "8082:80"
+    networks:
+      - api_bridge_network
     depends_on:
       - mysql
     environment:
@@ -36,4 +42,8 @@ services:
       MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
 
 volumes:
-  db_data:
+  db_data_app2:
+
+networks:
+  api_bridge_network:
+    driver: bridge
