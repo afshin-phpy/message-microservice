@@ -41,7 +41,13 @@ docker-compose up -d
 
 6. Create a .env file in root directory and copy .env.example content into .env file
 
-7. Run following command for database migration:
+7. Edit following key in .env file and put your system IP address:
+
+```
+AUTH_API_URL = "Your_IP_Address"
+```
+
+8. Run following command for database migration:
 ```
 docker-compose exec app1 php artisan migrate
 ```
