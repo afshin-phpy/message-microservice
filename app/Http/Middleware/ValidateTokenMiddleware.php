@@ -14,7 +14,7 @@ class ValidateTokenMiddleware
 
     public function __construct()
     {
-        // $this->authApiUrl   = config("auth_service.api_url");
+        $this->authApiUrl   = config("authenticate.api_url");
         $this->endPointPath = "/api/token/validate";
     }
 
@@ -29,7 +29,7 @@ class ValidateTokenMiddleware
 
             // Validate the token by sending it to the external service
             // validate token
-            $response = Http::withToken($token)->post("http://192.168.130.52:8000".$this->endPointPath);
+            $response = Http::withToken($token)->post($this->authApiUrl.$this->endPointPath);
             if($response->failed()) {
                 return APIResource::error('Unauthorized', 401);
             }
